@@ -1,0 +1,221 @@
+{
+  "info": {
+    "name": "HairStudio User API",
+    "_postman_id": "user-api-collection-env",
+    "description": "Postman collection for testing UserController endpoints (variables from environment)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register User",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Content-Type","value":"application/json"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john@example.com\",\n  \"phoneNumber\": \"123456789\",\n  \"password\": \"Passw0rd\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","register"]
+        }
+      }
+    },
+    {
+      "name": "Confirm Email",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"code\": \"CONFIRM_CODE\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/confirm-email",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","confirm-email"]
+        }
+      }
+    },
+    {
+      "name": "Password Reset Request",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/password-reset",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","password-reset"]
+        }
+      }
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"Passw0rd\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","login"]
+        }
+      }
+    },
+    {
+      "name": "Resend Confirmation",
+      "request": {
+        "method": "POST",
+        "header": [{"key":"Content-Type","value":"application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/resend-confirmation",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","resend-confirmation"]
+        }
+      }
+    },
+    {
+      "name": "Create User (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {"key":"FirstName","value":"Admin","type":"text"},
+            {"key":"LastName","value":"User","type":"text"},
+            {"key":"PhoneNumber","value":"123456789","type":"text"},
+            {"key":"Bio","value":"Some bio","type":"text"},
+            {"key":"Email","value":"adminuser@example.com","type":"text"},
+            {"key":"Password","value":"Passw0rd","type":"text"},
+            {"key":"Roles[0]","value":"1","type":"text"},
+            {"key":"Image","type":"file","src":""}
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User"]
+        }
+      }
+    },
+    {
+      "name": "Delete User (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/User/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","1"]
+        }
+      }
+    },
+    {
+      "name": "Employee Dropdown",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/User/employee-dropdown",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","employee-dropdown"]
+        }
+      }
+    },
+    {
+      "name": "Users Administration (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/User/users-administration?page=1&rowsPerPage=10&search=",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","users-administration"],
+          "query": [
+            {"key":"page","value":"1"},
+            {"key":"rowsPerPage","value":"10"},
+            {"key":"search","value":""}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Employees",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/User/employees",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","employees"]
+        }
+      }
+    },
+    {
+      "name": "Update User (Admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {"key":"FirstName","value":"Updated","type":"text"},
+            {"key":"LastName","value":"User","type":"text"},
+            {"key":"PhoneNumber","value":"123456789","type":"text"},
+            {"key":"Bio","value":"Updated bio","type":"text"},
+            {"key":"Email","value":"updateduser@example.com","type":"text"},
+            {"key":"Roles[0]","value":"1","type":"text"},
+            {"key":"Image","type":"file","src":""}
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","1"]
+        }
+      }
+    },
+    {
+      "name": "Update Password (User/Employee/Admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Content-Type","value":"application/json"},
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"oldPassword\": \"Passw0rd\",\n  \"newPassword\": \"NewPass123\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/User/update-password",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","User","update-password"]
+        }
+      }
+    }
+  ]
+}

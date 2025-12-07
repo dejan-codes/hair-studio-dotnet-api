@@ -1,0 +1,560 @@
+USE [master]
+GO
+/****** Object:  Database [HairStudio]    Script Date: 07-Dec-25 3:28:36 PM ******/
+CREATE DATABASE [HairStudio]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'HairStudio', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\HairStudio.mdf' , SIZE = 73728KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'HairStudio_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\HairStudio_log.ldf' , SIZE = 73728KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [HairStudio] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [HairStudio].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [HairStudio] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [HairStudio] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [HairStudio] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [HairStudio] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [HairStudio] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [HairStudio] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [HairStudio] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [HairStudio] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [HairStudio] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [HairStudio] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [HairStudio] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [HairStudio] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [HairStudio] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [HairStudio] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [HairStudio] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [HairStudio] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [HairStudio] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [HairStudio] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [HairStudio] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [HairStudio] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [HairStudio] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [HairStudio] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [HairStudio] SET RECOVERY FULL 
+GO
+ALTER DATABASE [HairStudio] SET  MULTI_USER 
+GO
+ALTER DATABASE [HairStudio] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [HairStudio] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [HairStudio] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [HairStudio] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [HairStudio] SET DELAYED_DURABILITY = DISABLED 
+GO
+ALTER DATABASE [HairStudio] SET ACCELERATED_DATABASE_RECOVERY = OFF  
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'HairStudio', N'ON'
+GO
+ALTER DATABASE [HairStudio] SET QUERY_STORE = ON
+GO
+ALTER DATABASE [HairStudio] SET QUERY_STORE (OPERATION_MODE = READ_WRITE, CLEANUP_POLICY = (STALE_QUERY_THRESHOLD_DAYS = 30), DATA_FLUSH_INTERVAL_SECONDS = 900, INTERVAL_LENGTH_MINUTES = 60, MAX_STORAGE_SIZE_MB = 1000, QUERY_CAPTURE_MODE = AUTO, SIZE_BASED_CLEANUP_MODE = AUTO, MAX_PLANS_PER_QUERY = 200, WAIT_STATS_CAPTURE_MODE = ON)
+GO
+USE [HairStudio]
+GO
+/****** Object:  User [hairstudio]    Script Date: 07-Dec-25 3:28:37 PM ******/
+CREATE USER [hairstudio] FOR LOGIN [hairstudio] WITH DEFAULT_SCHEMA=[dbo]
+GO
+ALTER ROLE [db_owner] ADD MEMBER [hairstudio]
+GO
+/****** Object:  Table [dbo].[Brand]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Brand](
+	[BrandId] [smallint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[BrandId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Customer]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Customer](
+	[CustomerId] [smallint] IDENTITY(1,1) NOT NULL,
+	[FullName] [nvarchar](100) NOT NULL,
+	[Phone] [nvarchar](20) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[CustomerId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[EmailConfirmation]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[EmailConfirmation](
+	[EmailConfirmationId] [uniqueidentifier] NOT NULL,
+	[UserId] [smallint] NOT NULL,
+	[ConfirmationCode] [nvarchar](255) NOT NULL,
+	[ExpiresAt] [datetime] NOT NULL,
+ CONSTRAINT [PK__EmailCon__A04DCE81E26AC282] PRIMARY KEY CLUSTERED 
+(
+	[EmailConfirmationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Gender]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Gender](
+	[GenderId] [tinyint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](6) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[GenderId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Message]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Message](
+	[MessageId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [smallint] NOT NULL,
+	[Content] [nvarchar](300) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[MessageId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Order]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Order](
+	[OrderId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [smallint] NOT NULL,
+	[OrderStatusId] [smallint] NOT NULL,
+	[PaymentStatusId] [smallint] NOT NULL,
+	[TotalPrice] [decimal](10, 2) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[PaidAt] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[OrderId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[OrderItem]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OrderItem](
+	[OrderId] [int] NOT NULL,
+	[ProductId] [smallint] NOT NULL,
+	[Quantity] [smallint] NOT NULL,
+	[Price] [decimal](10, 2) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[OrderId] ASC,
+	[ProductId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[OrderStatus]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[OrderStatus](
+	[OrderStatusId] [smallint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[OrderStatusId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PasswordResetToken]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PasswordResetToken](
+	[PasswordResetTokenId] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [smallint] NOT NULL,
+	[ResetToken] [nvarchar](255) NOT NULL,
+	[ExpiryDate] [datetime] NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+ CONSTRAINT [PK__Password__16066128B7FB791C] PRIMARY KEY CLUSTERED 
+(
+	[PasswordResetTokenId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[PaymentStatus]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PaymentStatus](
+	[PaymentStatusId] [smallint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[PaymentStatusId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Product]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Product](
+	[ProductId] [smallint] IDENTITY(1,1) NOT NULL,
+	[BrandId] [smallint] NOT NULL,
+	[ProductTypeId] [smallint] NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
+	[Description] [nvarchar](2000) NOT NULL,
+	[Price] [decimal](10, 2) NOT NULL,
+	[Stock] [int] NOT NULL,
+	[Image] [varbinary](max) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[CreatedByUserId] [smallint] NULL,
+	[NumberOfPurchases] [int] NOT NULL,
+	[SequenceNumber] [tinyint] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK__Product__B40CC6CD509C1D58] PRIMARY KEY CLUSTERED 
+(
+	[ProductId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[ProductType]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProductType](
+	[ProductTypeId] [smallint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ProductTypeId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Reservation]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Reservation](
+	[ReservationId] [smallint] IDENTITY(1,1) NOT NULL,
+	[ServiceId] [smallint] NOT NULL,
+	[ClientUserId] [smallint] NULL,
+	[ClientCustomerId] [smallint] NULL,
+	[EmployeeId] [smallint] NOT NULL,
+	[DateFrom] [datetime] NOT NULL,
+	[DateTo] [datetime] NOT NULL,
+	[Note] [nvarchar](255) NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK__Reservat__B7EE5F24CAC67224] PRIMARY KEY CLUSTERED 
+(
+	[ReservationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Role]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Role](
+	[RoleId] [smallint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Service]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Service](
+	[ServiceId] [smallint] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](50) NOT NULL,
+	[Description] [nvarchar](2000) NOT NULL,
+	[Price] [decimal](10, 2) NOT NULL,
+	[Discount] [decimal](10, 2) NULL,
+	[DurationMinutes] [int] NOT NULL,
+	[Image] [varbinary](max) NOT NULL,
+	[GenderId] [tinyint] NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[CreatedByUserId] [smallint] NULL,
+	[SequenceNumber] [tinyint] NOT NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK__Service__C51BB00A7517F9A3] PRIMARY KEY CLUSTERED 
+(
+	[ServiceId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[User]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[UserId] [smallint] IDENTITY(1,1) NOT NULL,
+	[FirstName] [nvarchar](50) NOT NULL,
+	[LastName] [nvarchar](50) NOT NULL,
+	[PhoneNumber] [nvarchar](50) NULL,
+	[Email] [nvarchar](100) NOT NULL,
+	[Bio] [nvarchar](255) NULL,
+	[PasswordHash] [nvarchar](255) NOT NULL,
+	[EmailConfirmed] [bit] NOT NULL,
+	[Image] [varbinary](max) NULL,
+	[IsActive] [bit] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY],
+UNIQUE NONCLUSTERED 
+(
+	[Email] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[UserRole]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UserRole](
+	[UserId] [smallint] NOT NULL,
+	[RoleId] [smallint] NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[WorkHour]    Script Date: 07-Dec-25 3:28:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[WorkHour](
+	[WorkHourId] [smallint] IDENTITY(1,1) NOT NULL,
+	[UserId] [smallint] NOT NULL,
+	[Date] [date] NOT NULL,
+	[TimeFrom] [time](0) NOT NULL,
+	[TimeTo] [time](0) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[WorkHourId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Brand] ADD  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[EmailConfirmation] ADD  CONSTRAINT [DF__EmailConf__Email__7C1A6C5A]  DEFAULT (newid()) FOR [EmailConfirmationId]
+GO
+ALTER TABLE [dbo].[Message] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Order] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[PasswordResetToken] ADD  CONSTRAINT [DF__PasswordR__Creat__00DF2177]  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Product] ADD  CONSTRAINT [DF__Product__Stock__59C55456]  DEFAULT ((0)) FOR [Stock]
+GO
+ALTER TABLE [dbo].[Product] ADD  CONSTRAINT [DF__Product__Created__5AB9788F]  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Product] ADD  CONSTRAINT [DF__Product__IsActiv__5BAD9CC8]  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[ProductType] ADD  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[Service] ADD  CONSTRAINT [DF__Service__Created__6AEFE058]  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[Service] ADD  CONSTRAINT [DF__Service__IsActiv__6BE40491]  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[User] ADD  DEFAULT ((0)) FOR [EmailConfirmed]
+GO
+ALTER TABLE [dbo].[User] ADD  DEFAULT ((0)) FOR [IsActive]
+GO
+ALTER TABLE [dbo].[EmailConfirmation]  WITH CHECK ADD  CONSTRAINT [FK_EmailConfirmation_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[EmailConfirmation] CHECK CONSTRAINT [FK_EmailConfirmation_User]
+GO
+ALTER TABLE [dbo].[Message]  WITH CHECK ADD  CONSTRAINT [FK_Message_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[Message] CHECK CONSTRAINT [FK_Message_User]
+GO
+ALTER TABLE [dbo].[Order]  WITH CHECK ADD  CONSTRAINT [FK_Order_OrderStatus] FOREIGN KEY([OrderStatusId])
+REFERENCES [dbo].[OrderStatus] ([OrderStatusId])
+GO
+ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_Order_OrderStatus]
+GO
+ALTER TABLE [dbo].[Order]  WITH CHECK ADD  CONSTRAINT [FK_Order_PaymentStatus] FOREIGN KEY([PaymentStatusId])
+REFERENCES [dbo].[PaymentStatus] ([PaymentStatusId])
+GO
+ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_Order_PaymentStatus]
+GO
+ALTER TABLE [dbo].[Order]  WITH CHECK ADD  CONSTRAINT [FK_Order_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[Order] CHECK CONSTRAINT [FK_Order_User]
+GO
+ALTER TABLE [dbo].[OrderItem]  WITH CHECK ADD  CONSTRAINT [FK_OrderItem_Order] FOREIGN KEY([OrderId])
+REFERENCES [dbo].[Order] ([OrderId])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[OrderItem] CHECK CONSTRAINT [FK_OrderItem_Order]
+GO
+ALTER TABLE [dbo].[OrderItem]  WITH CHECK ADD  CONSTRAINT [FK_OrderItem_Product] FOREIGN KEY([ProductId])
+REFERENCES [dbo].[Product] ([ProductId])
+GO
+ALTER TABLE [dbo].[OrderItem] CHECK CONSTRAINT [FK_OrderItem_Product]
+GO
+ALTER TABLE [dbo].[PasswordResetToken]  WITH CHECK ADD  CONSTRAINT [FK_PasswordResetToken_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[PasswordResetToken] CHECK CONSTRAINT [FK_PasswordResetToken_User]
+GO
+ALTER TABLE [dbo].[Product]  WITH CHECK ADD  CONSTRAINT [FK_Product_Brand] FOREIGN KEY([BrandId])
+REFERENCES [dbo].[Brand] ([BrandId])
+GO
+ALTER TABLE [dbo].[Product] CHECK CONSTRAINT [FK_Product_Brand]
+GO
+ALTER TABLE [dbo].[Product]  WITH CHECK ADD  CONSTRAINT [FK_Product_ProductType] FOREIGN KEY([ProductTypeId])
+REFERENCES [dbo].[ProductType] ([ProductTypeId])
+GO
+ALTER TABLE [dbo].[Product] CHECK CONSTRAINT [FK_Product_ProductType]
+GO
+ALTER TABLE [dbo].[Product]  WITH CHECK ADD  CONSTRAINT [FK_Product_User] FOREIGN KEY([CreatedByUserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[Product] CHECK CONSTRAINT [FK_Product_User]
+GO
+ALTER TABLE [dbo].[Reservation]  WITH CHECK ADD  CONSTRAINT [FK_Reservation_Customer] FOREIGN KEY([ClientCustomerId])
+REFERENCES [dbo].[Customer] ([CustomerId])
+GO
+ALTER TABLE [dbo].[Reservation] CHECK CONSTRAINT [FK_Reservation_Customer]
+GO
+ALTER TABLE [dbo].[Reservation]  WITH CHECK ADD  CONSTRAINT [FK_Reservation_Employee] FOREIGN KEY([EmployeeId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[Reservation] CHECK CONSTRAINT [FK_Reservation_Employee]
+GO
+ALTER TABLE [dbo].[Reservation]  WITH CHECK ADD  CONSTRAINT [FK_Reservation_Service] FOREIGN KEY([ServiceId])
+REFERENCES [dbo].[Service] ([ServiceId])
+GO
+ALTER TABLE [dbo].[Reservation] CHECK CONSTRAINT [FK_Reservation_Service]
+GO
+ALTER TABLE [dbo].[Reservation]  WITH CHECK ADD  CONSTRAINT [FK_Reservation_User] FOREIGN KEY([ClientUserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[Reservation] CHECK CONSTRAINT [FK_Reservation_User]
+GO
+ALTER TABLE [dbo].[Service]  WITH CHECK ADD  CONSTRAINT [FK_Service_Gender] FOREIGN KEY([GenderId])
+REFERENCES [dbo].[Gender] ([GenderId])
+GO
+ALTER TABLE [dbo].[Service] CHECK CONSTRAINT [FK_Service_Gender]
+GO
+ALTER TABLE [dbo].[Service]  WITH CHECK ADD  CONSTRAINT [FK_Service_User] FOREIGN KEY([CreatedByUserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[Service] CHECK CONSTRAINT [FK_Service_User]
+GO
+ALTER TABLE [dbo].[UserRole]  WITH CHECK ADD  CONSTRAINT [FK_UserRole_Role] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[Role] ([RoleId])
+GO
+ALTER TABLE [dbo].[UserRole] CHECK CONSTRAINT [FK_UserRole_Role]
+GO
+ALTER TABLE [dbo].[UserRole]  WITH CHECK ADD  CONSTRAINT [FK_UserRole_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[UserRole] CHECK CONSTRAINT [FK_UserRole_User]
+GO
+ALTER TABLE [dbo].[WorkHour]  WITH CHECK ADD  CONSTRAINT [FK_WorkHour_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[User] ([UserId])
+GO
+ALTER TABLE [dbo].[WorkHour] CHECK CONSTRAINT [FK_WorkHour_User]
+GO
+USE [master]
+GO
+ALTER DATABASE [HairStudio] SET  READ_WRITE 
+GO

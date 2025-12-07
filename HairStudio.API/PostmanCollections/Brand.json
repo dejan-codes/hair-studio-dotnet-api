@@ -1,0 +1,90 @@
+{
+  "info": {
+    "name": "HairStudio Brand API",
+    "_postman_id": "brand-api-collection-env",
+    "description": "Postman collection for testing BrandController endpoints (variables from environment)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET Brands (Paged)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Brand?page=1&rowsPerPage=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Brand"],
+          "query": [
+            {"key":"page","value":"1"},
+            {"key":"rowsPerPage","value":"10"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "GET Brands Dropdown",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Brand/brands-dropdown",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Brand","brands-dropdown"]
+        }
+      }
+    },
+    {
+      "name": "POST Create Brand",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Content-Type","value":"application/json"},
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"New Brand Name\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Brand",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Brand"]
+        }
+      }
+    },
+    {
+      "name": "PUT Update Brand",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Content-Type","value":"application/json"},
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Brand Name\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Brand/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Brand","1"]
+        }
+      }
+    },
+    {
+      "name": "DELETE Delete Brand",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Brand/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Brand","1"]
+        }
+      }
+    }
+  ]
+}

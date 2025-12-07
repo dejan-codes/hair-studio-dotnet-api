@@ -1,0 +1,120 @@
+{
+  "info": {
+    "name": "HairStudio Service API",
+    "_postman_id": "service-api-collection-env",
+    "description": "Postman collection for ServiceController endpoints (variables from environment)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create Service",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {"key":"Name","value":"Haircut","type":"text"},
+            {"key":"Description","value":"Basic haircut service","type":"text"},
+            {"key":"Price","value":"20.0","type":"text"},
+            {"key":"Discount","value":"0","type":"text"},
+            {"key":"DurationMinutes","value":"60","type":"text"},
+            {"key":"GenderId","value":"1","type":"text"},
+            {"key":"SequenceNumber","value":"1","type":"text"},
+            {"key":"Image","type":"file","src":"/path/to/sample-image.jpg"}
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Service",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Service"]
+        }
+      }
+    },
+    {
+      "name": "Get Services for Dropdown",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Service/service-dropdown",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Service","service-dropdown"]
+        }
+      }
+    },
+    {
+      "name": "Get All Services",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Service/all-services?page=1&rowsPerPage=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Service","all-services"],
+          "query":[
+            {"key":"page","value":"1"},
+            {"key":"rowsPerPage","value":"10"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Services by Gender",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Service/service-list",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Service","service-list"]
+        }
+      }
+    },
+    {
+      "name": "Update Service",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {"key":"Name","value":"Updated Haircut","type":"text"},
+            {"key":"Description","value":"Updated description","type":"text"},
+            {"key":"Price","value":"25.0","type":"text"},
+            {"key":"Discount","value":"5","type":"text"},
+            {"key":"DurationMinutes","value":"75","type":"text"},
+            {"key":"GenderId","value":"1","type":"text"},
+            {"key":"SequenceNumber","value":"2","type":"text"},
+            {"key":"Image","type":"file","src":"/path/to/sample-image.jpg"}
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Service/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Service","1"]
+        }
+      }
+    },
+    {
+      "name": "Delete Service",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Service/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Service","1"]
+        }
+      }
+    }
+  ]
+}

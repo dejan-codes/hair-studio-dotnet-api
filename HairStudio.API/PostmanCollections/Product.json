@@ -1,0 +1,195 @@
+{
+  "info": {
+    "name": "HairStudio Product API",
+    "_postman_id": "product-api-collection-env",
+    "description": "Postman collection for ProductController endpoints (variables from environment)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Product?page=1&rowsPerPage=10&search=&brand=&type=&minPrice=0&maxPrice=9999&sortOrder=asc",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product"],
+          "query": [
+            {"key":"page","value":"1"},
+            {"key":"rowsPerPage","value":"10"},
+            {"key":"search","value":""},
+            {"key":"brand","value":""},
+            {"key":"type","value":""},
+            {"key":"minPrice","value":"0"},
+            {"key":"maxPrice","value":"9999"},
+            {"key":"sortOrder","value":"asc"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Most Popular Products",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/popularity",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","popularity"]
+        }
+      }
+    },
+    {
+      "name": "Get Orders (Admin)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/orders?page=1&rowsPerPage=10",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","orders"],
+          "query": [
+            {"key":"page","value":"1"},
+            {"key":"rowsPerPage","value":"10"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Create Product (Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {"key":"Name","value":"New Product","type":"text"},
+            {"key":"Description","value":"Product Description","type":"text"},
+            {"key":"Price","value":"100.5","type":"text"},
+            {"key":"Stock","value":"10","type":"text"},
+            {"key":"SequenceNumber","value":"1","type":"text"},
+            {"key":"BrandId","value":"1","type":"text"},
+            {"key":"ProductTypeId","value":"1","type":"text"},
+            {"key":"Image","type":"file","src":""}
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Product",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product"]
+        }
+      }
+    },
+    {
+      "name": "Buy Products (User/Employee/Admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Content-Type","value":"application/json"},
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\n  {\n    \"productId\": 1,\n    \"quantity\": 2,\n    \"price\": 100.5\n  }\n]"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/buy",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","buy"]
+        }
+      }
+    },
+    {
+      "name": "Get Session Details",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/session/SESSION_ID",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","session","SESSION_ID"]
+        }
+      }
+    },
+    {
+      "name": "Handle Stripe Webhook",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"example\": \"webhook payload\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/webhook",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","webhook"]
+        }
+      }
+    },
+    {
+      "name": "Update Product (Admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {"key":"Name","value":"Updated Product","type":"text"},
+            {"key":"Description","value":"Updated Description","type":"text"},
+            {"key":"Price","value":"150","type":"text"},
+            {"key":"Stock","value":"20","type":"text"},
+            {"key":"SequenceNumber","value":"2","type":"text"},
+            {"key":"BrandId","value":"1","type":"text"},
+            {"key":"ProductTypeId","value":"1","type":"text"},
+            {"key":"Image","type":"file","src":""}
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/product/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","product","1"]
+        }
+      }
+    },
+    {
+      "name": "Change Order Status (Admin)",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"orderId\": 1,\n  \"status\": 2\n}"
+        },
+        "url": {
+           "raw": "{{baseUrl}}/api/Product/change-order-status",
+           "host": [ "{{baseUrl}}" ],
+           "path": [ "api", "Product", "change-order-status" ]
+        }
+      }
+    },
+    {
+      "name": "Delete Product (Admin)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Product/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Product","1"]
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "info": {
+    "name": "HairStudio WorkHour API",
+    "_postman_id": "workhour-api-collection-env",
+    "description": "Postman collection for WorkHourController endpoints (variables from environment)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create WorkHours",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[{\n  \"EmployeeId\": 1,\n  \"Date\": \"2025-09-25T00:00:00\",\n  \"TimeFrom\": \"09:00:00\",\n  \"TimeTo\": \"17:00:00\"\n}]",
+          "options": {"raw":{"language":"json"}}
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/WorkHour",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","WorkHour"]
+        }
+      }
+    },
+    {
+      "name": "Get WorkHours by Date",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/WorkHour?date=2025-09-25",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","WorkHour"],
+          "query":[{"key":"date","value":"2025-09-25"}]
+        }
+      }
+    },
+    {
+      "name": "Get Employee WorkHours",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/WorkHour/employee?employeeId=1&dateFrom=2025-09-25&dateTo=2025-09-30",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","WorkHour","employee"],
+          "query":[
+            {"key":"employeeId","value":"1"},
+            {"key":"dateFrom","value":"2025-09-25"},
+            {"key":"dateTo","value":"2025-09-30"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Delete WorkHours",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[{\n  \"EmployeeId\": 1,\n  \"Date\": \"2025-09-25T00:00:00\"\n}]",
+          "options": {"raw":{"language":"json"}}
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/WorkHour",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","WorkHour"]
+        }
+      }
+    }
+  ]
+}

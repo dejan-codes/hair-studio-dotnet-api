@@ -1,0 +1,111 @@
+{
+  "info": {
+    "name": "HairStudio Reservation API",
+    "_postman_id": "reservation-api-collection-env",
+    "description": "Postman collection for ReservationController endpoints (variables from environment)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Create User Reservation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Content-Type","value":"application/json"},
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"serviceId\": 1,\n  \"employeeId\": 2,\n  \"dateFrom\": \"2025-10-25T10:00:00\",\n  \"dateTo\": \"2025-10-25T11:00:00\",\n  \"note\": \"Client note example\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Reservation/create-reservation",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Reservation","create-reservation"]
+        }
+      }
+    },
+    {
+      "name": "Create Employee Reservation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {"key":"Content-Type","value":"application/json"},
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "body": {
+            "mode": "raw",
+            "raw": "{\n  \"serviceId\": 1,\n  \"employeeId\": 2,\n  \"dateFrom\": \"2025-10-25T10:00:00\",\n  \"dateTo\": \"2025-10-25T11:00:00\",\n  \"fullName\": \"John Doe\",\n  \"phone\": \"+38761123456\",\n  \"employeesNote\": \"Employee note example\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/Reservation/create-employee-reservation",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Reservation","create-employee-reservation"]
+        }
+      }
+    },
+    {
+      "name": "Get Employee Reservations",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Reservation/reservations?employeeId=2&dateFrom=2025-10-25&dateTo=2025-10-30",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Reservation","reservations"],
+          "query": [
+            {"key":"employeeId","value":"2"},
+            {"key":"dateFrom","value":"2025-10-25"},
+            {"key":"dateTo","value":"2025-10-30"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Reservation Details",
+      "request": {
+        "method": "GET",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Reservation/reservation-details/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Reservation","reservation-details","1"]
+        }
+      }
+    },
+    {
+      "name": "Cancel Reservation",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {"key":"Authorization","value":"Bearer {{token}}"}
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/Reservation/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Reservation","1"]
+        }
+      }
+    },
+    {
+      "name": "Export Calendar By Employee",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/Reservation/excel?from=2025-10-25&to=2025-10-30",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","Reservation","excel"],
+          "query": [
+            {"key":"from","value":"2025-10-25"},
+            {"key":"to","value":"2025-10-30"}
+          ]
+        }
+      }
+    }
+  ]
+}
