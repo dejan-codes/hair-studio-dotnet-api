@@ -1,5 +1,4 @@
-﻿using HairStudio.API.Infrastructure;
-using HairStudio.Services.Common;
+﻿using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.Reservations;
 using HairStudio.Services.Errors;
 using HairStudio.Services.Interfaces;
@@ -13,23 +12,17 @@ namespace HairStudio.API.Controllers
     public class ReservationController : ControllerBase
     {
         private readonly IReservationService _reservationService;
-        private readonly ICurrentUserContext _currentUserContext;
 
-        public ReservationController(IReservationService reservationService, ICurrentUserContext currentUserContext)
+        public ReservationController(IReservationService reservationService)
         {
             _reservationService = reservationService;
-            _currentUserContext = currentUserContext;
         }
 
         [Authorize(Roles = "User,Employee,Administrator")]
         [HttpPost("create-reservation")]
         public async Task<IActionResult> CreateUserReservationAsync([FromBody] UserReservationCreateDTO clientReservationCreateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _reservationService.CreateUserReservationAsync(tokenUserId.Value, clientReservationCreateDTO);
+            var result = await _reservationService.CreateUserReservationAsync(clientReservationCreateDTO);
             return result.ToActionResult();
         }
 
@@ -37,22 +30,14 @@ namespace HairStudio.API.Controllers
         [HttpPost("create-employee-reservation")]
         public async Task<IActionResult> CreateEmployeeReservationAsync([FromBody] EmployeeReservationCreateDTO employeeReservationCreateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _reservationService.CreateEmployeeReservationAsync(tokenUserId.Value, employeeReservationCreateDTO);
+            var result = await _reservationService.CreateEmployeeReservationAsync(employeeReservationCreateDTO);
             return result.ToActionResult();
         }
 
         [HttpGet("reservations")]
         public async Task<IActionResult> GetEmployeeReservationsAsync(int employeeId, DateTime dateFrom, DateTime dateTo)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _reservationService.GetEmployeeReservationsAsync(tokenUserId.Value, employeeId, dateFrom, dateTo);
+            var result = await _reservationService.GetEmployeeReservationsAsync(employeeId, dateFrom, dateTo);
             return result.ToActionResult();
         }
 
@@ -60,11 +45,7 @@ namespace HairStudio.API.Controllers
         [HttpGet("reservation-details/{reservationId}")]
         public async Task<IActionResult> GetReservationDetailsAsync(short reservationId)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _reservationService.GetReservationDetailsAsync(tokenUserId.Value, reservationId);
+            var result = await _reservationService.GetReservationDetailsAsync(reservationId);
             return result.ToActionResult();
         }
 
@@ -72,11 +53,7 @@ namespace HairStudio.API.Controllers
         [HttpPut("{reservationId}")]
         public async Task<IActionResult> CancelReservationAsync(short reservationId)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _reservationService.CancelReservationAsync(tokenUserId.Value, reservationId);
+            var result = await _reservationService.CancelReservationAsync(reservationId);
             return result.ToActionResult();
         }
 

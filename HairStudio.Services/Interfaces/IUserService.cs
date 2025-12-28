@@ -10,12 +10,12 @@ namespace HairStudio.Services.Interfaces
         Task<Result> UserPasswordResetAsync(string email);
         Task<Result<TokenDTO>> LoginAsync(LoginDTO loginDTO);
         Task<Result> ResendConfirmationCodeAsync(string email);
-        Task<Result> CreateUserAsync(UserCreateDTO userCreateDTO, short tokenUserId);
+        Task<Result> CreateUserAsync(UserCreateDTO userCreateDTO);
         Task<Result<IEnumerable<EmployeeDropdownDTO>>> GetEmployeeForDropdownAsync();
         Task<Result<object>> GetUsersForAdminAsync(int page, int rowsPerPage, string? search);
         Task<Result<IEnumerable<EmployeeDetailsDTO>>> GetEmployeesAsync();
-        Task<Result> DeleteUserAsync(short userId, short tokenUserId);
-        Task<Result> UpdateUserAsync(short userId, UserUpdateDTO userUpdateDTO, short tokenUserId);
-        Task<Result> UpdatePasswordAsync(short tokenUserId, PasswordUpdateDTO passwordUpdateDTO);
+        Task<Result> DeleteUserAsync(short userId);
+        Task<Result> UpdateUserAsync(short userId, UserUpdateDTO userUpdateDTO);
+        Task<Result> UpdatePasswordAsync(PasswordUpdateDTO passwordUpdateDTO);
     }
 }

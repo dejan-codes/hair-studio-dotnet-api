@@ -12,11 +12,13 @@ using HairStudio.Repository.Extensions;
 using Microsoft.EntityFrameworkCore;
 using HairStudio.Services.Audit;
 using HairStudio.Services.Enums;
+using HairStudio.Services.Infrastructure;
 
 namespace HairStudio.Services.Implementations
 {
     public class UserService : IUserService
     {
+        private readonly ICurrentUserContext _currentUserContext;
         private readonly JwtService _jwtService;
         private readonly IEmailService _emailService;
         private readonly IMessageRepository _messageRepository;
@@ -27,8 +29,9 @@ namespace HairStudio.Services.Implementations
         private readonly IConfiguration _configuration;
         private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UserService(JwtService jwtService, IEmailService emailService, IMessageRepository messageRepository, IUserRepository userRepository, IRoleRepository roleRepository, IEmailConfirmationRepository emailConfirmationRepository, IPasswordResetTokenRepository passwordResetTokenRepository, IConfiguration configuration)
+        public UserService(ICurrentUserContext currentUserContext, JwtService jwtService, IEmailService emailService, IMessageRepository messageRepository, IUserRepository userRepository, IRoleRepository roleRepository, IEmailConfirmationRepository emailConfirmationRepository, IPasswordResetTokenRepository passwordResetTokenRepository, IConfiguration configuration)
         {
+            _currentUserContext = currentUserContext;
             _jwtService = jwtService;
             _emailService = emailService;
             _messageRepository = messageRepository;
@@ -184,9 +187,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CREATE_USER")]
-        public async Task<Result> CreateUserAsync(UserCreateDTO userCreateDTO, short userId)
+        public async Task<Result> CreateUserAsync(UserCreateDTO userCreateDTO)
         {
-            var createdBy = await _userRepository.GetByIdAsync(userId);
+            var createdBy = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (createdBy == null)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -281,14 +284,14 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("DELETE_USER")]
-        public async Task<Result> DeleteUserAsync(short userId, short tokenUserId)
+        public async Task<Result> DeleteUserAsync(short userId)
         {
             var user = await _userRepository.GetByIdAsync(userId);
 
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
-            var tokenUser = await _userRepository.GetByIdAsync(tokenUserId);
+            var tokenUser = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
 
             if (tokenUser == null || !tokenUser.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
@@ -307,13 +310,13 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("UPDATE_USER")]
-        public async Task<Result> UpdateUserAsync(short userId, UserUpdateDTO userUpdateDTO, short tokenUserId)
+        public async Task<Result> UpdateUserAsync(short userId, UserUpdateDTO userUpdateDTO)
         {
             var existingUser = await _userRepository.GetUserWithRolesAsync(userId);
             if (existingUser == null || !existingUser.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
-            var tokenUser = await _userRepository.GetByIdAsync(tokenUserId);
+            var tokenUser = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (tokenUser == null || !tokenUser.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -355,9 +358,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("UPDATE_PASSWORD")]
-        public async Task<Result> UpdatePasswordAsync(short tokenUserId, PasswordUpdateDTO passwordChangeDTO)
+        public async Task<Result> UpdatePasswordAsync(PasswordUpdateDTO passwordChangeDTO)
         {
-            var existingUser = await _userRepository.GetByIdAsync(tokenUserId);
+            var existingUser = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (existingUser == null || !existingUser.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 

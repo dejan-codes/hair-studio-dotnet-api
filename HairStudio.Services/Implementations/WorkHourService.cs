@@ -3,7 +3,6 @@ using HairStudio.Repository.Interfaces;
 using HairStudio.Services.Audit;
 using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.WorkHours;
-using HairStudio.Services.Errors;
 using HairStudio.Services.Interfaces;
 
 namespace HairStudio.Services.Implementations

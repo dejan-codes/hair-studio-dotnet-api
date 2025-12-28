@@ -5,6 +5,7 @@ using HairStudio.Services.Audit;
 using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.ProductTypes;
 using HairStudio.Services.Errors;
+using HairStudio.Services.Infrastructure;
 using HairStudio.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +13,14 @@ namespace HairStudio.Services.Implementations
 {
     public class ProductTypeService : IProductTypeService
     {
+        private readonly ICurrentUserContext _currentUserContext;
         private readonly IProductTypeRepository _productTypeRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMessageRepository _messageRepository;
 
-        public ProductTypeService(IProductTypeRepository productTypeRepository, IUserRepository userRepository, IMessageRepository messageRepository)
+        public ProductTypeService(ICurrentUserContext currentUserContext, IProductTypeRepository productTypeRepository, IUserRepository userRepository, IMessageRepository messageRepository)
         {
+            _currentUserContext = currentUserContext;
             _productTypeRepository = productTypeRepository;
             _userRepository = userRepository;
             _messageRepository = messageRepository;
@@ -45,9 +48,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CREATE_PRODUCT_TYPE")]
-        public async Task<Result> CreateProductTypeAsync(ProductTypeCreateDTO productTypeCreateDTO, short tokenUserId)
+        public async Task<Result> CreateProductTypeAsync(ProductTypeCreateDTO productTypeCreateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -73,9 +76,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("UPDATE_PRODUCT_TYPE")]
-        public async Task<Result> UpdateProductTypeAsync(short productTypeId, ProductTypeUpdateDTO productTypeUpdateDTO, short tokenUserId)
+        public async Task<Result> UpdateProductTypeAsync(short productTypeId, ProductTypeUpdateDTO productTypeUpdateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -97,9 +100,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("DELETE_PRODUCT_TYPE")]
-        public async Task<Result> DeleteProductTypeAsync(short productTypeId, short tokenUserId)
+        public async Task<Result> DeleteProductTypeAsync(short productTypeId)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 

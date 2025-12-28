@@ -5,6 +5,7 @@ using HairStudio.Services.Audit;
 using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.Brands;
 using HairStudio.Services.Errors;
+using HairStudio.Services.Infrastructure;
 using HairStudio.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,12 +13,14 @@ namespace HairStudio.Services.Implementations
 {
     public class BrandService : IBrandService
     {
+        private readonly ICurrentUserContext _currentUserContext;
         private readonly IBrandRepository _brandRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMessageRepository _messageRepository;
 
-        public BrandService(IBrandRepository brandRepository, IUserRepository userRepository, IMessageRepository messageRepository)
+        public BrandService(ICurrentUserContext currentUserContext, IBrandRepository brandRepository, IUserRepository userRepository, IMessageRepository messageRepository)
         {
+            _currentUserContext = currentUserContext;
             _brandRepository = brandRepository;
             _userRepository = userRepository;
             _messageRepository = messageRepository;
@@ -45,9 +48,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CREATE_BRAND")]
-        public async Task<Result> CreateBrandAsync(BrandCreateDTO brandCreateDTO, short tokenUserId)
+        public async Task<Result> CreateBrandAsync(BrandCreateDTO brandCreateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -74,9 +77,10 @@ namespace HairStudio.Services.Implementations
 
 
         [Auditable("UPDATE_BRAND")]
-        public async Task<Result> UpdateBrandAsync(short brandId, BrandUpdateDTO brandUpdateDTO, short tokenUserId)
+        public async Task<Result> UpdateBrandAsync(short brandId, BrandUpdateDTO brandUpdateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            _currentUserContext.GetAuthenticatedUserId();
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -99,9 +103,9 @@ namespace HairStudio.Services.Implementations
 
 
         [Auditable("DELETE_BRAND")]
-        public async Task<Result> DeleteBrandAsync(short brandId, short tokenUserId)
+        public async Task<Result> DeleteBrandAsync(short brandId)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 

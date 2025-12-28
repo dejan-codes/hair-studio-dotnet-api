@@ -1,7 +1,5 @@
-﻿using HairStudio.API.Infrastructure;
-using HairStudio.Services.Common;
+﻿using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.ProductTypes;
-using HairStudio.Services.Errors;
 using HairStudio.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +11,10 @@ namespace HairStudio.API.Controllers
     public class ProductTypeController : ControllerBase
     {
         private readonly IProductTypeService _productTypeService;
-        private readonly ICurrentUserContext _currentUserContext;
 
-        public ProductTypeController(IProductTypeService productTypeService, ICurrentUserContext currentUserContext)
+        public ProductTypeController(IProductTypeService productTypeService)
         {
             _productTypeService = productTypeService;
-            _currentUserContext = currentUserContext;
         }
 
         [HttpGet]
@@ -32,11 +28,7 @@ namespace HairStudio.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProductTypeAsync([FromBody] ProductTypeCreateDTO productTypeCreateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _productTypeService.CreateProductTypeAsync(productTypeCreateDTO, tokenUserId.Value);
+            var result = await _productTypeService.CreateProductTypeAsync(productTypeCreateDTO);
             return result.ToActionResult();
         }
 
@@ -44,11 +36,7 @@ namespace HairStudio.API.Controllers
         [HttpPut("{productTypeId}")]
         public async Task<IActionResult> UpdateProductTypeAsync(short productTypeId, [FromBody] ProductTypeUpdateDTO productTypeUpdateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _productTypeService.UpdateProductTypeAsync(productTypeId, productTypeUpdateDTO, tokenUserId.Value);
+            var result = await _productTypeService.UpdateProductTypeAsync(productTypeId, productTypeUpdateDTO);
             return result.ToActionResult();
         }
 
@@ -56,11 +44,7 @@ namespace HairStudio.API.Controllers
         [HttpDelete("{productTypeId}")]
         public async Task<IActionResult> DeleteProductTypeAsync(short productTypeId)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _productTypeService.DeleteProductTypeAsync(productTypeId, tokenUserId.Value);
+            var result = await _productTypeService.DeleteProductTypeAsync(productTypeId);
             return result.ToActionResult();
         }
 

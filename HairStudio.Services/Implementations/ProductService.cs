@@ -8,6 +8,7 @@ using HairStudio.Services.DTOs.Orders;
 using HairStudio.Services.DTOs.Products;
 using HairStudio.Services.Enums;
 using HairStudio.Services.Errors;
+using HairStudio.Services.Infrastructure;
 using HairStudio.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,6 +19,7 @@ namespace HairStudio.Services.Implementations
 {
     public class ProductService : IProductService
     {
+        private readonly ICurrentUserContext _currentUserContext;
         private readonly IProductRepository _productRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IBrandRepository _brandRepository;
@@ -26,8 +28,9 @@ namespace HairStudio.Services.Implementations
         private readonly IMessageRepository _messageRepository;
         private readonly IConfiguration _configuration;
 
-        public ProductService(IProductRepository productRepository, IOrderRepository orderRepository, IBrandRepository brandRepository, IProductTypeRepository productTypeRepository, IUserRepository userRepository, IMessageRepository messageRepository, IConfiguration configuration)
+        public ProductService(ICurrentUserContext currentUserContext, IProductRepository productRepository, IOrderRepository orderRepository, IBrandRepository brandRepository, IProductTypeRepository productTypeRepository, IUserRepository userRepository, IMessageRepository messageRepository, IConfiguration configuration)
         {
+            _currentUserContext = currentUserContext;
             _productRepository = productRepository;
             _orderRepository = orderRepository;
             _brandRepository = brandRepository;
@@ -118,8 +121,9 @@ namespace HairStudio.Services.Implementations
             return Result<object>.Success(productsDTO);
         }
 
-        public async Task<Result<object>> GetOrdersAsync(short tokenUserId, int page, int rowsPerPage)
+        public async Task<Result<object>> GetOrdersAsync(int page, int rowsPerPage)
         {
+            var tokenUserId = _currentUserContext.GetAuthenticatedUserId();
             if (page < 1 || rowsPerPage < 1)
                 return Result<object>.Failure(ValidationErrors.NumberOfPages);
 
@@ -163,9 +167,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CREATE_PRODUCT")]
-        public async Task<Result> CreateProductAsync(ProductCreateDTO productCreateDTO, short tokenUserId)
+        public async Task<Result> CreateProductAsync(ProductCreateDTO productCreateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -205,9 +209,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("BUY_PRODUCTS")]
-        public async Task<Result<UrlResponseDTO>> BuyProductsAsync(List<BuyProductDTO> buyProductDTOList, short tokenUserId)
+        public async Task<Result<UrlResponseDTO>> BuyProductsAsync(List<BuyProductDTO> buyProductDTOList)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result<UrlResponseDTO>.Failure(UserErrors.UserNotFound);
 
@@ -331,9 +335,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("UPDATE_PRODUCT")]
-        public async Task<Result> UpdateProductAsync(short productId, ProductUpdateDTO productUpdateDTO, short tokenUserId)
+        public async Task<Result> UpdateProductAsync(short productId, ProductUpdateDTO productUpdateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -374,9 +378,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CHANGE_ORDER_STATUS")]
-        public async Task<Result> ChangeOrderStatusAsync(int orderId, short orderStatusId, short tokenUserId)
+        public async Task<Result> ChangeOrderStatusAsync(int orderId, short orderStatusId)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -408,9 +412,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("DELETE_PRODUCT")]
-        public async Task<Result> DeleteProductAsync(short productId, short tokenUserId)
+        public async Task<Result> DeleteProductAsync(short productId)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 

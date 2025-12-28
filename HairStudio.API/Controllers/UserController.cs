@@ -1,7 +1,5 @@
-﻿using HairStudio.API.Infrastructure;
-using HairStudio.Services.Common;
+﻿using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.Users;
-using HairStudio.Services.Errors;
 using HairStudio.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +11,10 @@ namespace HairStudio.API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ICurrentUserContext _currentUserContext;
 
-        public UserController(IUserService userService, ICurrentUserContext currentUserContext)
+        public UserController(IUserService userService)
         {
             _userService = userService;
-            _currentUserContext = currentUserContext;
         }
 
         [HttpPost("register")]
@@ -60,11 +56,7 @@ namespace HairStudio.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateUserAsync([FromForm] UserCreateDTO userCreateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _userService.CreateUserAsync(userCreateDTO, tokenUserId.Value);
+            var result = await _userService.CreateUserAsync(userCreateDTO);
             return result.ToActionResult();
         }
 
@@ -72,11 +64,7 @@ namespace HairStudio.API.Controllers
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUserAsync(short userId)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _userService.DeleteUserAsync(userId, tokenUserId.Value);
+            var result = await _userService.DeleteUserAsync(userId);
             return result.ToActionResult();
         }
 
@@ -106,11 +94,7 @@ namespace HairStudio.API.Controllers
         [HttpPut("{userId}")]
         public async Task<IActionResult> UpdateUserAsync(short userId, [FromForm] UserUpdateDTO userUpdateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _userService.UpdateUserAsync(userId, userUpdateDTO, tokenUserId.Value);
+            var result = await _userService.UpdateUserAsync(userId, userUpdateDTO);
             return result.ToActionResult();
         }
 
@@ -118,11 +102,7 @@ namespace HairStudio.API.Controllers
         [HttpPut("update-password")]
         public async Task<IActionResult> UpdatePasswordAsync([FromBody] PasswordUpdateDTO passwordUpdateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _userService.UpdatePasswordAsync(tokenUserId.Value, passwordUpdateDTO);
+            var result = await _userService.UpdatePasswordAsync(passwordUpdateDTO);
             return result.ToActionResult();
         }
     }

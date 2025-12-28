@@ -6,9 +6,9 @@ namespace HairStudio.Services.Interfaces
     public interface IProductTypeService
     {
         Task<Result<object>> GetPagedProductTypesAsync(int page, int rowsPerPage);
-        Task<Result> CreateProductTypeAsync(ProductTypeCreateDTO productTypeCreateDTO, short tokenUserId);
-        Task<Result> UpdateProductTypeAsync(short productTypeId, ProductTypeUpdateDTO productTypeUpdateDTO, short tokenUserId);
-        Task<Result> DeleteProductTypeAsync(short productTypeId, short tokenUserId);
+        Task<Result> CreateProductTypeAsync(ProductTypeCreateDTO productTypeCreateDTO);
+        Task<Result> UpdateProductTypeAsync(short productTypeId, ProductTypeUpdateDTO productTypeUpdateDTO);
+        Task<Result> DeleteProductTypeAsync(short productTypeId);
         Task<Result<IEnumerable<ProductTypeDTO>>> GetProductTypesForDropdownAsync();
     }
 }

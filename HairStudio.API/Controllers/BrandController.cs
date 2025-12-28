@@ -1,7 +1,5 @@
-﻿using HairStudio.API.Infrastructure;
-using HairStudio.Services.Common;
+﻿using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.Brands;
-using HairStudio.Services.Errors;
 using HairStudio.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,12 +11,10 @@ namespace HairStudio.API.Controllers
     public class BrandController : ControllerBase
     {
         private readonly IBrandService _brandService;
-        private readonly ICurrentUserContext _currentUserContext;
 
-        public BrandController(IBrandService brandService, ICurrentUserContext currentUserContext)
+        public BrandController(IBrandService brandService)
         {
             _brandService = brandService;
-            _currentUserContext = currentUserContext;
         }
 
         [HttpGet]
@@ -32,11 +28,7 @@ namespace HairStudio.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBrandAsync([FromBody] BrandCreateDTO brandCreateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _brandService.CreateBrandAsync(brandCreateDTO, tokenUserId.Value);
+            var result = await _brandService.CreateBrandAsync(brandCreateDTO);
             return result.ToActionResult();
         }
 
@@ -44,11 +36,7 @@ namespace HairStudio.API.Controllers
         [HttpPut("{brandId}")]
         public async Task<IActionResult> UpdateBrandAsync(short brandId, [FromBody] BrandUpdateDTO brandUpdateDTO)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _brandService.UpdateBrandAsync(brandId, brandUpdateDTO, tokenUserId.Value);
+            var result = await _brandService.UpdateBrandAsync(brandId, brandUpdateDTO);
             return result.ToActionResult();
         }
 
@@ -56,11 +44,7 @@ namespace HairStudio.API.Controllers
         [HttpDelete("{brandId}")]
         public async Task<IActionResult> DeleteBrandAsync(short brandId)
         {
-            var tokenUserId = _currentUserContext.UserId;
-            if (tokenUserId == null)
-                return Result.Failure(UserErrors.UserNotFound).ToActionResult();
-
-            var result = await _brandService.DeleteBrandAsync(brandId, tokenUserId.Value);
+            var result = await _brandService.DeleteBrandAsync(brandId);
             return result.ToActionResult();
         }
 

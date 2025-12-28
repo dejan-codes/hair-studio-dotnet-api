@@ -6,19 +6,22 @@ using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.Reservations;
 using HairStudio.Services.Enums;
 using HairStudio.Services.Errors;
+using HairStudio.Services.Infrastructure;
 using HairStudio.Services.Interfaces;
 
 namespace HairStudio.Services.Implementations
 {
     public class ReservationService : IReservationService
     {
+        private readonly ICurrentUserContext _currentUserContext;
         private readonly IReservationRepository _reservationRepository;
         private readonly IServiceRepository _serviceRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMessageRepository _messageRepository;
 
-        public ReservationService(IReservationRepository reservationRepository, IServiceRepository serviceRepository, IUserRepository userRepository, IMessageRepository messageRepository)
+        public ReservationService(ICurrentUserContext currentUserContext, IReservationRepository reservationRepository, IServiceRepository serviceRepository, IUserRepository userRepository, IMessageRepository messageRepository)
         {
+            _currentUserContext = currentUserContext;
             _reservationRepository = reservationRepository;
             _serviceRepository = serviceRepository;
             _userRepository = userRepository;
@@ -26,9 +29,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CREATE_USER_RESERVATION")]
-        public async Task<Result> CreateUserReservationAsync(short tokenUserId, UserReservationCreateDTO userReservationCreateDTO)
+        public async Task<Result> CreateUserReservationAsync(UserReservationCreateDTO userReservationCreateDTO)
         {
-            var user = await _userRepository.GetUserWithRolesAsync(tokenUserId);
+            var user = await _userRepository.GetUserWithRolesAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -65,9 +68,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CREATE_EMPLOYEE_RESERVATION")]
-        public async Task<Result> CreateEmployeeReservationAsync(short tokenUserId, EmployeeReservationCreateDTO employeeReservationCreateDTO)
+        public async Task<Result> CreateEmployeeReservationAsync(EmployeeReservationCreateDTO employeeReservationCreateDTO)
         {
-            var user = await _userRepository.GetUserWithRolesAsync(tokenUserId);
+            var user = await _userRepository.GetUserWithRolesAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -112,9 +115,9 @@ namespace HairStudio.Services.Implementations
             return Result.Success();
         }
 
-        public async Task<Result<IEnumerable<ReservationSummaryDTO>>> GetEmployeeReservationsAsync(short tokenUserId, int employeeId, DateTime dateFrom, DateTime dateTo)
+        public async Task<Result<IEnumerable<ReservationSummaryDTO>>> GetEmployeeReservationsAsync(int employeeId, DateTime dateFrom, DateTime dateTo)
         {
-            var user = await _userRepository.GetUserWithRolesAsync(tokenUserId);
+            var user = await _userRepository.GetUserWithRolesAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result<IEnumerable<ReservationSummaryDTO>>.Failure(UserErrors.UserNotFound);
 
@@ -136,9 +139,9 @@ namespace HairStudio.Services.Implementations
             return Result<IEnumerable<ReservationSummaryDTO>>.Success(selectedReservations);
         }
 
-        public async Task<Result<ReservationDetailsDTO?>> GetReservationDetailsAsync(short tokenUserId, short reservationId)
+        public async Task<Result<ReservationDetailsDTO?>> GetReservationDetailsAsync(short reservationId)
         {
-            var user = await _userRepository.GetUserWithRolesAsync(tokenUserId);
+            var user = await _userRepository.GetUserWithRolesAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result<ReservationDetailsDTO?>.Failure(UserErrors.UserNotFound);
 
@@ -166,9 +169,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("CANCEL_RESERVATION")]
-        public async Task<Result> CancelReservationAsync(short tokenUserId, short reservationId)
+        public async Task<Result> CancelReservationAsync(short reservationId)
         {
-            var user = await _userRepository.GetUserWithRolesAsync(tokenUserId);
+            var user = await _userRepository.GetUserWithRolesAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result<ReservationDetailsDTO?>.Failure(UserErrors.UserNotFound);
 

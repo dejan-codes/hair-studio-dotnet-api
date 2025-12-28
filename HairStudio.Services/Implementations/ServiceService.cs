@@ -6,6 +6,7 @@ using HairStudio.Services.Common;
 using HairStudio.Services.DTOs.Services;
 using HairStudio.Services.Enums;
 using HairStudio.Services.Errors;
+using HairStudio.Services.Infrastructure;
 using HairStudio.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,21 +14,23 @@ namespace HairStudio.Services.Implementations
 {
     public class ServiceService : IServiceService
     {
+        private readonly ICurrentUserContext _currentUserContext;
         private readonly IServiceRepository _serviceRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMessageRepository _messageRepository;
 
-        public ServiceService(IServiceRepository serviceRepository, IUserRepository userRepository, IMessageRepository messageRepository)
+        public ServiceService(ICurrentUserContext currentUserContext, IServiceRepository serviceRepository, IUserRepository userRepository, IMessageRepository messageRepository)
         {
+            _currentUserContext = currentUserContext;
             _serviceRepository = serviceRepository;
             _userRepository = userRepository;
             _messageRepository = messageRepository;
         }
 
         [Auditable("CREATE_SERVICE")]
-        public async Task<Result> CreateServiceAsync(ServiceCreateDTO serviceCreateDTO, short tokenUserId)
+        public async Task<Result> CreateServiceAsync(ServiceCreateDTO serviceCreateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -56,9 +59,9 @@ namespace HairStudio.Services.Implementations
             return Result.Success();
         }
 
-        public async Task<Result<IEnumerable<ServiceDropdownDTO>>> GetServicesForDropdownAsync(short tokenUserId)
+        public async Task<Result<IEnumerable<ServiceDropdownDTO>>> GetServicesForDropdownAsync()
         {
-            var user = await _userRepository.GetUserWithRolesAsync(tokenUserId);
+            var user = await _userRepository.GetUserWithRolesAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result<IEnumerable<ServiceDropdownDTO>>.Failure(UserErrors.UserNotFound);
 
@@ -140,9 +143,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("UPDATE_SERVICE")]
-        public async Task<Result> UpdateServiceAsync(short serviceId, ServiceUpdateDTO serviceUpdateDTO, short tokenUserId)
+        public async Task<Result> UpdateServiceAsync(short serviceId, ServiceUpdateDTO serviceUpdateDTO)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 
@@ -173,9 +176,9 @@ namespace HairStudio.Services.Implementations
         }
 
         [Auditable("DELETE_SERVICE")]
-        public async Task<Result> DeleteServiceAsync(short serviceId, short tokenUserId)
+        public async Task<Result> DeleteServiceAsync(short serviceId)
         {
-            var user = await _userRepository.GetByIdAsync(tokenUserId);
+            var user = await _userRepository.GetByIdAsync(_currentUserContext.GetAuthenticatedUserId());
             if (user == null || !user.IsActive)
                 return Result.Failure(UserErrors.UserNotFound);
 

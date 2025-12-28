@@ -1,9 +1,11 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
-namespace HairStudio.API.Infrastructure
+namespace HairStudio.Services.Infrastructure
 {
     public interface ICurrentUserContext
     {
+        short GetAuthenticatedUserId();
         short? UserId { get; }
     }
 
@@ -29,6 +31,15 @@ namespace HairStudio.API.Infrastructure
 
                 return null;
             }
+        }
+
+        public short GetAuthenticatedUserId()
+        {
+            var userId = UserId;
+            if (!userId.HasValue)
+                throw new UnauthorizedAccessException("User context is required but was not found.");
+
+            return userId.Value;
         }
     }
 }
