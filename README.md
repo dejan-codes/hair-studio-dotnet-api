@@ -24,8 +24,6 @@ Main application layer.
 
 -   `Controllers/` --- Contains Web API controllers defining HTTP
     endpoints.
--   `Infrastructure/` --- Provides access to current authenticated user
-    context.
 -   `PostmanCollections/` --- Postman collections for endpoint testing.
 -   `appsettings.json` --- Application configuration (database, email,
     JWT).
@@ -65,6 +63,8 @@ Business logic layer.
     messaging.
 -   `GlobalExceptionHandler/` --- Central exception handling
     configuration.
+-   `Infrastructure/` --- Provides access to current authenticated user
+    context.
 -   `Implementations/` --- Service implementation classes.
 -   `Interfaces/` --- Business service contracts defining core logic.
 
